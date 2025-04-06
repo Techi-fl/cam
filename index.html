@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Captura de Câmera</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      background: #f0f2f5;
+    }
+    h2 {
+      margin-bottom: 10px;
+    }
+    video, canvas {
+      width: 100%;
+      max-width: 400px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    button {
+      margin-top: 10px;
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #status {
+      margin-top: 10px;
+      font-size: 14px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h2>📸 Tirar Foto da Câmera</h2>
+  <video id="camera" autoplay playsinline></video>
+  <canvas id="canvas" style="display: none;"></canvas>
+  <button onclick="tirarFoto()">Tirar Foto e Enviar</button>
+  <p id="status"></p>
+
+  <script>
+    const video = document.getElementById('camera');
+    const canvas = document.getElementById('canvas');
+    const statusText = document.getElementById('status');
+    const apiURL = "https://apikk.pythonanywhere.com/upload";
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => video.srcObject = stream)
+      .catch(err => alert("Erro ao acessar a câmera: " + err));
+
+    function tirarFoto() {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0);
+
+      canvas.toBlob(blob => {
+        const formData = new FormData();
+        formData.append("foto", blob, "foto.jpg");
+
+        fetch(apiURL, {
+          method: "POST",
+          body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+          statusText.textContent = "✅ Imagem enviada com sucesso!";
+          setTimeout(() => statusText.textContent = "", 3000);
+        })
+        .catch(err => {
+          statusText.textContent = "❌ Erro ao enviar imagem.";
+        });
+      }, "image/jpeg");
+    }
+  </script>
+</body>
+</html>
