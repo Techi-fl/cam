@@ -5,16 +5,14 @@
   <title>Captura de Câmera</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- 🔐 Segurança -->
+  <!-- Segurança ajustada para funcionar local -->
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
     img-src 'self' data:;
-    script-src 'self';
+    script-src 'self' 'unsafe-inline';
     style-src 'self' 'unsafe-inline';
-    connect-src https://apikk.pythonanywhere.com;
-    frame-ancestors 'none';
+    connect-src https://apikk.pythonanywhere.com ws://127.0.0.1:*;
     form-action 'self';">
-  <meta http-equiv="X-Frame-Options" content="DENY">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Permissions-Policy" content="camera=(self), microphone=(), geolocation=()">
   <meta http-equiv="Cache-Control" content="no-store">
@@ -23,8 +21,11 @@
     body {
       font-family: 'Segoe UI', sans-serif;
       text-align: center;
-      background: #f0f2f5;
+      background: #f8f9fa;
       padding: 20px;
+    }
+    h2 {
+      margin-bottom: 20px;
     }
     video, canvas {
       width: 100%;
@@ -39,27 +40,27 @@
       font-size: 16px;
       border-radius: 8px;
       border: none;
+      outline: none;
     }
     button {
       background-color: #007bff;
       color: white;
       cursor: pointer;
-      transition: 0.3s;
+      transition: background 0.3s;
     }
     button:hover {
       background-color: #0056b3;
-    }
-    #status {
-      margin-top: 10px;
-      font-size: 14px;
-      color: green;
     }
     input {
       width: 90%;
       max-width: 300px;
       padding: 10px;
-      font-size: 16px;
       border: 1px solid #ccc;
+    }
+    #status {
+      margin-top: 10px;
+      font-size: 14px;
+      color: green;
     }
   </style>
 </head>
@@ -136,7 +137,7 @@
     }
 
     function tirarPrint() {
-      tirarFoto(); // usa mesma lógica da foto
+      tirarFoto(); // mesma função da foto
     }
 
     // Inicializa
